@@ -37,8 +37,22 @@ class Ball {
             this.dy *= -this.friction; // Reverse and reduce speed
             this.y = canvas.height - this.radius;
         }
-        // bounce off balls
-        function resolveCollisions(ball, otherBall) {
+
+        // Bounce off the sides
+        if (this.x + this.radius + this.dx > canvas.width || this.x - this.radius + this.dx < 0) {
+            this.dx *= -1; // Reverse direction
+        }
+
+        // Update position
+        this.x += this.dx;
+        this.y += this.dy;
+
+        this.draw();
+    }
+}
+
+// Collision resolution logic
+function resolveCollisions(ball, otherBall) {
     const dx = otherBall.x - ball.x;
     const dy = otherBall.y - ball.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
@@ -68,27 +82,6 @@ class Ball {
     }
 }
 
-// Update each ball
-balls.forEach((ball, i) => {
-    for (let j = i + 1; j < balls.length; j++) {
-        resolveCollisions(ball, balls[j]);
-    }
-    ball.update();
-});
-
-        // Bounce off the sides
-        if (this.x + this.radius + this.dx > canvas.width || this.x - this.radius + this.dx < 0) {
-            this.dx *= -1; // Reverse direction
-        }
-
-        // Update position
-        this.x += this.dx;
-        this.y += this.dy;
-
-        this.draw();
-    }
-}
-
 // Create random balls on click
 canvas.addEventListener('click', (e) => {
     const radius = Math.random() * 20 + 10;
@@ -103,8 +96,17 @@ canvas.addEventListener('click', (e) => {
 // Animation loop
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    balls.forEach((ball) => ball.update());
+
+    // Check for collisions and update each ball
+    balls.forEach((ball, i) => {
+        for (let j = i + 1; j < balls.length; j++) {
+            resolveCollisions(ball, balls[j]);
+        }
+        ball.update();
+    });
+
     requestAnimationFrame(animate);
 }
 
+// Start the animation
 animate();
