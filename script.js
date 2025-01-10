@@ -37,6 +37,44 @@ class Ball {
             this.dy *= -this.friction; // Reverse and reduce speed
             this.y = canvas.height - this.radius;
         }
+        // bounce off balls
+        function resolveCollisions(ball, otherBall) {
+    const dx = otherBall.x - ball.x;
+    const dy = otherBall.y - ball.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    // Check if balls overlap
+    if (distance < ball.radius + otherBall.radius) {
+        // Simple elastic collision logic
+        const angle = Math.atan2(dy, dx);
+        const speed1 = Math.sqrt(ball.dx ** 2 + ball.dy ** 2);
+        const speed2 = Math.sqrt(otherBall.dx ** 2 + otherBall.dy ** 2);
+
+        // Adjust velocities using angles
+        ball.dx = speed2 * Math.cos(angle);
+        ball.dy = speed2 * Math.sin(angle);
+        otherBall.dx = speed1 * Math.cos(angle + Math.PI);
+        otherBall.dy = speed1 * Math.sin(angle + Math.PI);
+
+        // Slightly separate balls to prevent sticking
+        const overlap = ball.radius + otherBall.radius - distance;
+        const separationX = overlap * Math.cos(angle) / 2;
+        const separationY = overlap * Math.sin(angle) / 2;
+
+        ball.x -= separationX;
+        ball.y -= separationY;
+        otherBall.x += separationX;
+        otherBall.y += separationY;
+    }
+}
+
+// Update each ball
+balls.forEach((ball, i) => {
+    for (let j = i + 1; j < balls.length; j++) {
+        resolveCollisions(ball, balls[j]);
+    }
+    ball.update();
+});
 
         // Bounce off the sides
         if (this.x + this.radius + this.dx > canvas.width || this.x - this.radius + this.dx < 0) {
