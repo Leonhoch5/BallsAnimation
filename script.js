@@ -59,10 +59,11 @@ function resolveCollisions(ball, otherBall) {
 
     // Check if balls overlap
     if (distance < ball.radius + otherBall.radius) {
-        // Check if balls have the same size for merging
+        // Check if balls can merge
         if (ball.radius === otherBall.radius) {
-            // Calculate new radius based on combined area
-            const newRadius = Math.sqrt(ball.radius ** 2 + otherBall.radius ** 2);
+            // Calculate new radius from predefined sizes
+            const currentIndex = predefinedSizes.indexOf(ball.radius);
+            const newRadius = predefinedSizes[currentIndex + 1] || ball.radius; // Get next size or cap at max
 
             // Calculate new position (weighted average)
             const newX = (ball.x * ball.radius + otherBall.x * otherBall.radius) / (ball.radius + otherBall.radius);
@@ -84,10 +85,8 @@ function resolveCollisions(ball, otherBall) {
             return; // Exit function since the current ball no longer exists
         }
 
-        // If balls don't merge, handle elastic collision
+        // Handle elastic collision if no merge
         const overlap = ball.radius + otherBall.radius - distance;
-
-        // Separate the balls
         const separationX = (overlap * dx) / distance;
         const separationY = (overlap * dy) / distance;
         ball.x -= separationX / 2;
@@ -95,13 +94,9 @@ function resolveCollisions(ball, otherBall) {
         otherBall.x += separationX / 2;
         otherBall.y += separationY / 2;
 
-        // Calculate angle of collision
         const angle = Math.atan2(dy, dx);
-
-        // Ball velocities
         const speed1 = Math.sqrt(ball.dx ** 2 + ball.dy ** 2);
         const speed2 = Math.sqrt(otherBall.dx ** 2 + otherBall.dy ** 2);
-
         const direction1 = Math.atan2(ball.dy, ball.dx);
         const direction2 = Math.atan2(otherBall.dy, otherBall.dx);
 
@@ -121,11 +116,11 @@ function resolveCollisions(ball, otherBall) {
     }
 }
 
+const predefinedSizes = [10, 14, 20, 28, 40]; // Sizes based on area logic
 
 // Create random balls on click
 canvas.addEventListener('click', (e) => {
-    const possibleSizes = [10, 15, 20, 25, 30, 35, 40];
-    const radius = possibleSizes[Math.floor(Math.random() * possibleSizes.length)]; // Randomly pick a size
+    const radius = predefinedSizes[Math.floor(Math.random() * predefinedSizes.length)];
     const x = e.clientX;
     const y = e.clientY;
     const dx = (Math.random() - 0.5) * 8; // Random horizontal velocity
