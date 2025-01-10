@@ -66,8 +66,8 @@ function resolveCollisions(ball, otherBall) {
         const separationX = (overlap * dx) / distance;
         const separationY = (overlap * dy) / distance;
 
-        ball.x -= separationX / 2; // Move each ball half the overlap distance
-        ball.y -= separationY / 2;
+        ball.x -= separationX; // Move each ball half the overlap distance
+        ball.y -= separationY;
         otherBall.x += separationX / 2;
         otherBall.y += separationY / 2;
 
