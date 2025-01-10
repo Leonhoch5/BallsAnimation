@@ -1,5 +1,6 @@
 const canvas = document.getElementById('bouncingBall');
 const ctx = canvas.getContext('2d');
+const scoreLabel = document.getElementById('score');
 
 
 canvas.width = window.innerWidth;
@@ -63,7 +64,7 @@ function resolveCollisions(ball, otherBall) {
         if (ball.radius === otherBall.radius) {
             // Calculate new radius from predefined sizes
             const currentIndex = predefinedSizes.indexOf(ball.radius);
-            const newRadius = predefinedSizes[currentIndex + 1] || ball.radius; // Get next size or cap at max
+            const newRadius = predefinedSizes[currentIndex + 1] || ball.radius; // Get next size or use the current size if no larger size is available
 
             // Calculate new position (weighted average)
             const newX = (ball.x * ball.radius + otherBall.x * otherBall.radius) / (ball.radius + otherBall.radius);
@@ -116,11 +117,21 @@ function resolveCollisions(ball, otherBall) {
     }
 }
 
-const predefinedSizes = [10, 14, 20, 28, 40]; // Sizes based on area logic
+function generatePredefinedSizes() {
+    const sizes = [];
+    for (let i = 0; i < 8; i++) {
+        sizes.push(Math.pow(2, i + 1) * 5); // Example logic: sizes based on powers of 2 multiplied by 5
+    }
+    return sizes;
+}
+
+const predefinedSizes = generatePredefinedSizes(); // Sizes based on area logic
+const predefinedCreateSizes = [10, 14, 20, 28, 40]
+
 
 // Create random balls on click
 canvas.addEventListener('click', (e) => {
-    const radius = predefinedSizes[Math.floor(Math.random() * predefinedSizes.length)];
+    const radius = predefinedCreateSizes[Math.floor(Math.random() * predefinedCreateSizes.length)];
     const x = e.clientX;
     const y = e.clientY;
     const dx = (Math.random() - 0.5) * 8; // Random horizontal velocity
@@ -141,6 +152,17 @@ function animate() {
         }
         ball.update();
     });
+    // Calculate the score
+    const score = balls.reduce((total, ball) => total + ball.radius, 0);
+    scoreLabel.textContent = `Score: ${score}`;
+    
+    // Increase score when merging
+    const mergedBalls = balls.filter(ball => predefinedSizes.includes(ball.radius));
+    const mergeScore = mergedBalls.reduce((total, ball) => {
+        const mergeIndex = predefinedSizes.indexOf(ball.radius);
+        return total + (10 * (mergeIndex + 1));
+    }, 0);
+    scoreLabel.textContent = `Score: ${score + mergeScore}`;
 
     requestAnimationFrame(animate);
 }
