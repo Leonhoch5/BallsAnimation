@@ -57,28 +57,46 @@ function resolveCollisions(ball, otherBall) {
     const dy = otherBall.y - ball.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
 
-    
+    // Check if balls overlap
     if (distance < ball.radius + otherBall.radius) {
-        
+        // Calculate overlap amount
+        const overlap = ball.radius + otherBall.radius - distance;
+
+        // Separate the balls based on their masses (assume equal mass here for simplicity)
+        const separationX = (overlap * dx) / distance;
+        const separationY = (overlap * dy) / distance;
+
+        ball.x -= separationX / 2; // Move each ball half the overlap distance
+        ball.y -= separationY / 2;
+        otherBall.x += separationX / 2;
+        otherBall.y += separationY / 2;
+
+        // Calculate angle of collision
         const angle = Math.atan2(dy, dx);
+
+        // Ball velocities
         const speed1 = Math.sqrt(ball.dx ** 2 + ball.dy ** 2);
         const speed2 = Math.sqrt(otherBall.dx ** 2 + otherBall.dy ** 2);
 
-        // Adjust velocities using angles
-        ball.dx = speed2 * Math.cos(angle);
-        ball.dy = speed2 * Math.sin(angle);
-        otherBall.dx = speed1 * Math.cos(angle + Math.PI);
-        otherBall.dy = speed1 * Math.sin(angle + Math.PI);
+        // Velocities in the direction of the collision
+        const direction1 = Math.atan2(ball.dy, ball.dx);
+        const direction2 = Math.atan2(otherBall.dy, otherBall.dx);
 
-        // Slightly separate balls to prevent sticking   
-        const overlap = ball.radius + otherBall.radius - distance;
-        const separationX = overlap * Math.cos(angle) / 2;
-        const separationY = overlap * Math.sin(angle) / 2;
+        const velocityX1 = speed1 * Math.cos(direction1 - angle);
+        const velocityY1 = speed1 * Math.sin(direction1 - angle);
+        const velocityX2 = speed2 * Math.cos(direction2 - angle);
+        const velocityY2 = speed2 * Math.sin(direction2 - angle);
 
-        ball.x -= separationX;
-        ball.y -= separationY;
-        otherBall.x += separationX;
-        otherBall.y += separationY;
+        // Swap velocities in the collision direction (elastic collision)
+        const finalVelocityX1 = velocityX2;
+        const finalVelocityX2 = velocityX1;
+
+        // Convert back to original coordinate system
+        ball.dx = finalVelocityX1 * Math.cos(angle) - velocityY1 * Math.sin(angle);
+        ball.dy = finalVelocityX1 * Math.sin(angle) + velocityY1 * Math.cos(angle);
+
+        otherBall.dx = finalVelocityX2 * Math.cos(angle) - velocityY2 * Math.sin(angle);
+        otherBall.dy = finalVelocityX2 * Math.sin(angle) + velocityY2 * Math.cos(angle);
     }
 }
 
