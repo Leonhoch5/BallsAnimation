@@ -153,7 +153,7 @@ function animate() {
         ball.update();
     });
     // Calculate the score
-    const score = balls.reduce((total, ball) => total + ball.radius, 0);
+    const score = balls.reduce(((total, ball) => total + ball.radius, 0) / 10);
     scoreLabel.textContent = `Score: ${score}`;
     
     // Increase score when merging
