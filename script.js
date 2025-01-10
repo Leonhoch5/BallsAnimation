@@ -162,7 +162,7 @@ function animate() {
         const mergeIndex = predefinedSizes.indexOf(ball.radius);
         return total + (10 * (mergeIndex + 1));
     }, 0);
-    scoreLabel.textContent = `Score: ${score + mergeScore}`;
+    scoreLabel.textContent = `Score: ${score + mergeScore / 10}`;
 
     requestAnimationFrame(animate);
 }
