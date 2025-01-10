@@ -66,10 +66,10 @@ function resolveCollisions(ball, otherBall) {
         const separationX = (overlap * dx) / distance;
         const separationY = (overlap * dy) / distance;
 
-        ball.x -= separationX; // Move each ball half the overlap distance
-        ball.y -= separationY;
-        otherBall.x += separationX;
-        otherBall.y += separationY;
+        ball.x -= separationX / 1.1; // Move each ball half the overlap distance
+        ball.y -= separationY / 1.1;
+        otherBall.x += separationX / 1.1;
+        otherBall.y += separationY / 1.1;
 
         // Calculate angle of collision
         const angle = Math.atan2(dy, dx);
