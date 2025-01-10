@@ -16,7 +16,7 @@ class Ball {
         this.color = color;
         this.dx = dx; // horizontal velocity
         this.dy = dy; // vertical velocity
-        this.gravity = 1;
+        this.gravity = 0.981;
         this.friction = 0.9; // Energy loss on bounce
     }
 
