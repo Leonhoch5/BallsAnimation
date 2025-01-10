@@ -122,15 +122,18 @@ function resolveCollisions(ball, otherBall) {
 }
 
 
+// Create random balls on click
 canvas.addEventListener('click', (e) => {
-    const radius = Math.random() * 20 + 10;
+    const possibleSizes = [10, 15, 20, 25, 30, 35, 40];
+    const radius = possibleSizes[Math.floor(Math.random() * possibleSizes.length)]; // Randomly pick a size
     const x = e.clientX;
     const y = e.clientY;
-    const dx = (Math.random() - 0.5) * 8; 
+    const dx = (Math.random() - 0.5) * 8; // Random horizontal velocity
     const dy = (Math.random() - 0.5) * 8; // Random vertical velocity
     const color = `hsl(${Math.random() * 360}, 70%, 60%)`;
     balls.push(new Ball(x, y, radius, color, dx, dy));
 });
+
 
 // Animation loop
 function animate() {
